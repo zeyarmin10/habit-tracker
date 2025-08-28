@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Alert } from "react-native";
+import { StyleSheet, View, Alert, ScrollView } from "react-native"; // Import ScrollView for better form handling
 import {
   Button,
   TextInput,
@@ -18,6 +18,7 @@ const CreateHabitScreen = () => {
   const theme = useTheme();
 
   const [habitName, setHabitName] = useState("");
+  const [description, setDescription] = useState(""); // New state for description
   const [frequency, setFrequency] = useState("daily"); // 'daily', 'weekly', 'monthly'
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -39,8 +40,10 @@ const CreateHabitScreen = () => {
       const newHabitRef = push(ref(database, `users/${user.uid}/habits`));
       await set(newHabitRef, {
         name: habitName.trim(),
+        description: description.trim(), // Save the description
         frequency: frequency,
         createdAt: new Date().toISOString(),
+        // You might want to add other fields like lastCompleted, streak, etc.
       });
       Alert.alert("Success", "Habit created successfully!");
       router.back(); // Go back to the habits list
@@ -58,7 +61,7 @@ const CreateHabitScreen = () => {
       <Stack.Screen
         options={{ title: "Create New Habit", headerShown: true }}
       />
-      <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.title}>Define Your New Habit</Text>
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
@@ -69,6 +72,17 @@ const CreateHabitScreen = () => {
           mode="outlined"
           style={styles.input}
           placeholder="e.g., Drink water, Read a book"
+        />
+
+        <TextInput
+          label="Description (Optional)" // New description input
+          value={description}
+          onChangeText={setDescription}
+          mode="outlined"
+          multiline
+          numberOfLines={4}
+          style={[styles.input, styles.descriptionInput]}
+          placeholder="Add more details about your habit"
         />
 
         <Text style={styles.frequencyLabel}>Frequency</Text>
@@ -92,14 +106,14 @@ const CreateHabitScreen = () => {
         >
           Save Habit
         </Button>
-      </View>
+      </ScrollView>
     </>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1, // Allows ScrollView to grow
     backgroundColor: "#f0f4f7",
     padding: 20,
     alignItems: "center",
@@ -113,6 +127,10 @@ const styles = StyleSheet.create({
   input: {
     width: "100%",
     marginBottom: 20,
+  },
+  descriptionInput: {
+    minHeight: 100, // Make description input taller
+    textAlignVertical: "top", // Align text to top for multiline
   },
   frequencyLabel: {
     fontSize: 16,

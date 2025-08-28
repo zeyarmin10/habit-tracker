@@ -116,11 +116,14 @@ export const useAuthService = () => {
         email,
         password
       );
-      await set(ref(database, "users/" + userCredential.user.uid), {
-        email: userCredential.user.email,
-        name: name,
-        createdAt: new Date().toISOString(),
-      });
+      await set(
+        ref(database, "users/" + userCredential.user.uid + "/profile"),
+        {
+          email: userCredential.user.email,
+          name: name,
+          createdAt: new Date().toISOString(),
+        }
+      );
     } catch (error: any) {
       if (error.code === "auth/email-already-in-use") {
         setAuthError("That email address is already in use!");
