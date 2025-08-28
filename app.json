@@ -37,6 +37,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        // Exclude the hooks directory from Expo Router's scanning
+        "unstable_exclude": ["**/hooks/**"]
+      }
     }
   }
 }
