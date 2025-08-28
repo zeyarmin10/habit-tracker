@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Button, Text, useTheme } from "react-native-paper";
 import { router, Stack } from "expo-router";
-import { MaterialCommunityIcons } from "@expo/vector-icons"; // For the add icon
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { useAuth } from "../hooks/useAuthService";
 
@@ -12,11 +12,12 @@ const HomeScreen = () => {
 
   const handleLogout = async () => {
     await handleSignOut();
-    router.replace("/"); // Navigate back to the login screen after logout
+    router.replace("/");
   };
 
   const handleNavigateToCreateHabit = () => {
-    router.push("/(app)/create-habit"); // Navigate to the new screen
+    // UPDATED PATH HERE
+    router.push("/modals/create-habit"); // Changed path
   };
 
   return (
@@ -25,18 +26,19 @@ const HomeScreen = () => {
         options={{
           title: "My Habits",
           headerShown: true,
-          // Add a button to the header right to create a new habit
+          headerStyle: { backgroundColor: theme.colors.primary },
+          headerTintColor: "#fff",
           headerRight: () => (
             <Button
               onPress={handleNavigateToCreateHabit}
               icon={({ color, size }) => (
                 <MaterialCommunityIcons
                   name="plus-circle-outline"
-                  color={color}
+                  color="#fff"
                   size={size}
                 />
               )}
-              textColor="#fff" // Assuming white text on primary header background
+              textColor="#fff"
             >
               New
             </Button>
@@ -46,7 +48,6 @@ const HomeScreen = () => {
       <View style={styles.container}>
         <Text style={styles.welcomeText}>Welcome, {user?.email}!</Text>
         <Text style={styles.subtitle}>This is your Habits overview.</Text>
-        {/* Your habit listing component will go here */}
         <Text style={{ marginBottom: 20 }}>
           List of habits will appear here.
         </Text>

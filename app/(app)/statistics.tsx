@@ -1,17 +1,17 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Stack } from "expo-router";
-import { useTheme } from "react-native-paper"; // Import useTheme
+import { useTheme } from "react-native-paper";
 import { Text } from "react-native";
 
 const StatisticsScreen = () => {
-  const theme = useTheme(); // Access theme for consistent styling
+  const theme = useTheme();
 
   return (
     <>
       <Stack.Screen
         options={{
-          title: "Habit Statistics",
+          title: "Stats",
           headerShown: true, // Show header for this specific tab screen
           headerStyle: { backgroundColor: theme.colors.primary }, // Apply theme color to header
           headerTintColor: "#fff", // White text for header title

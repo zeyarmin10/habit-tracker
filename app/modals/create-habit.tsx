@@ -41,7 +41,6 @@ const CreateHabitScreen = () => {
         name: habitName.trim(),
         frequency: frequency,
         createdAt: new Date().toISOString(),
-        // You might want to add other fields like lastCompleted, streak, etc.
       });
       Alert.alert("Success", "Habit created successfully!");
       router.back(); // Go back to the habits list

@@ -1,12 +1,22 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { Stack } from "expo-router"; // Import Stack for header configuration
+import { Stack } from "expo-router";
+import { useTheme } from "react-native-paper";
 import { Text } from "react-native";
 
 const SettingsScreen = () => {
+  const theme = useTheme();
+
   return (
     <>
-      <Stack.Screen options={{ title: "Settings", headerShown: true }} />
+      <Stack.Screen
+        options={{
+          title: "Settings",
+          headerShown: true, // Show header for this specific tab screen
+          headerStyle: { backgroundColor: theme.colors.primary }, // Apply theme color to header
+          headerTintColor: "#fff", // White text for header title
+        }}
+      />
       <View style={styles.container}>
         <Text style={styles.text}>Settings content will go here.</Text>
       </View>
