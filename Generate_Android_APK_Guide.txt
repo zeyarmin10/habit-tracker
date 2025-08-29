@@ -57,7 +57,7 @@ Run the command: Open your terminal in the same directory as the downloaded bund
 Bash
 
 java -jar bundletool.jar build-apks --bundle=your-app.aab --output=output.apks --mode=universal
-eg. java -jar bundletool.jar build-apks --bundle=application-20b133ca-4e5e-4130-9560-945908faa083.aab --output=output.apks --mode=universal
+eg. java -jar bundletool.jar build-apks --bundle=application-1f0d68a5-1053-4738-8228-f1c08433c5f6.aab --output=output.apks --mode=universal
 
 Note: If you get a Java version error, you'll need to update your Java JDK to at least version 11.
 
@@ -157,3 +157,109 @@ eg. adb connect 192.168.18.73:5555
 Use log filter
 eg. adb logcat | findstr "co.zeyar.habittracker.MainAcitivity"
 eg. adb logcat | findstr "co.zeyar.habittracker"
+
+
+
+
+
+
+npm install --global eas-cli 
+&& 
+npx create-expo-app habit-tracker 
+&& 
+cd habit-tracker 
+&& 
+eas init --id dec18184-3858-45e2-ad48-4461ff8cce96
+
+
+
+
+For your React Native Expo app, you can get the SHA1 fingerprint for Android in a few ways, depending on whether you are using EAS Build or the classic build process. The most straightforward method for an Expo project is to use the EAS CLI.
+
+Using EAS CLI
+This is the recommended method for most modern Expo projects as it works seamlessly with the EAS Build service.
+
+Open your terminal in the root of your project.
+
+Run the command:
+
+Bash
+
+eas credentials --platform android
+The CLI will prompt you to choose a profile. Select the one you want to inspect (e.g., production or development).
+
+It will then display the credentials associated with that profile, including the SHA1 fingerprint.
+
+Using a Local Build
+If you are not using EAS Build and have the Android directory in your project, you can use gradlew to generate a report.
+
+Navigate to the android directory of your project:
+
+Bash
+
+cd android
+Run the signing report command:
+
+Bash
+
+./gradlew signingReport
+On Windows, you might need to use gradlew.bat signingReport.
+
+This command will print out the SHA1 and SHA-256 fingerprints for both your debug and release keys.
+
+From Google Play Console
+If you have already uploaded your app to the Google Play Console, you can find the SHA1 fingerprints there. This is especially useful for getting the SHA1 of your App signing key certificate, which is used by Google Play for a managed signing process.
+
+Log in to your Google Play Console.
+
+Select your app.
+
+Go to Release > Setup > App Integrity.
+
+Under App signing key certificate, you'll see the SHA-1 and SHA-256 fingerprints. There's also a separate section for the Upload key certificate.
+
+
+
+
+
+In a React Native Expo project, you should place the google-services.json file in the root of your project directory. After placing the file, you must specify its location in your app.json or app.config.js file.
+
+Configuration Steps
+Place the File: Download google-services.json from your Firebase project and save it in the root folder of your Expo project (the same folder that contains package.json).
+
+Update your App Config: Open app.json or app.config.js and add a new key to the android object that points to the file.
+
+Example app.json configuration:
+
+JSON
+
+{
+  "expo": {
+    ...
+    "android": {
+      "googleServicesFile": "./google-services.json"
+    }
+  }
+}
+Using app.config.js is a more flexible option if you need to handle multiple environments (e.g., development, staging, production) with different google-services.json files.
+
+Example app.config.js configuration:
+
+JavaScript
+
+export default {
+  expo: {
+    ...
+    android: {
+      googleServicesFile: process.env.GOOGLE_SERVICES_FILE || "./google-services.json"
+    }
+  }
+};
+In this example, process.env.GOOGLE_SERVICES_FILE can be a different path for each build environment.
+
+Important Notes
+Managed Workflow: This setup works with both the managed and bare Expo workflows. When you use EAS Build, Expo handles the placement of this file into the correct native Android directory (android/app/google-services.json) automatically during the build process.
+
+Version Control: Because google-services.json contains non-sensitive but unique identifiers for your project, it's generally safe to check into your version control (e.g., git). However, some teams prefer to treat it as a secret and manage it using EAS Secrets to prevent it from being in the repository.
+
+iOS: For iOS, you'll need the equivalent GoogleService-Info.plist file, which is also placed in the root of the project and referenced in the app.json or app.config.js file under the ios object.

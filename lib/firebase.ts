@@ -29,6 +29,6 @@ export const webClientId =
 export const iosClientId =
   "145216875810-0kj2c34etndhck832dtvm59n22oiijos.apps.googleusercontent.com";
 export const androidClientId =
-  "145216875810-0kj2c34etndhck832dtvm59n22oiijos.apps.googleusercontent.com";
+  "145216875810-gnf7cfd4coa1mahs0t2g11u471emegvk.apps.googleusercontent.com";
 
 export { database, auth }; // Export both database and auth

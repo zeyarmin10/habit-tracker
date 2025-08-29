@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "habit-tracker",
+    "name": "Habit Tracker",
     "slug": "habit-tracker",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -12,6 +12,7 @@
       "supportsTablet": true
     },
     "android": {
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -43,12 +44,15 @@
       "router": {
         "unstable_exclude": [
           "**/hooks/**",
+          "**/hooks/**",
+          "**/hooks/**",
           "**/hooks/**"
         ]
       },
       "eas": {
-        "projectId": "ab5f8af0-5cce-49e9-a919-8d3595ed3ee5"
+        "projectId": "dec18184-3858-45e2-ad48-4461ff8cce96"
       }
-    }
+    },
+    "owner": "zeyarmin.zayu"
   }
 }

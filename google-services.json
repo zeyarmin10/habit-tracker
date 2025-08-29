@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "145216875810",
+    "firebase_url": "https://habit-tracker-a100f-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "habit-tracker-a100f",
+    "storage_bucket": "habit-tracker-a100f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:145216875810:android:f38897ad75ee43e581c97b",
+        "android_client_info": {
+          "package_name": "com.zeyarmin.habittracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "145216875810-gnf7cfd4coa1mahs0t2g11u471emegvk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.zeyarmin.habittracker",
+            "certificate_hash": "e5da17b15305ae8595c1d78c8e96ea909ad7901a"
+          }
+        },
+        {
+          "client_id": "145216875810-0kj2c34etndhck832dtvm59n22oiijos.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAr7GIAjIsP1qHuL1nhrp79F4yrAztFPhk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "145216875810-0kj2c34etndhck832dtvm59n22oiijos.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
