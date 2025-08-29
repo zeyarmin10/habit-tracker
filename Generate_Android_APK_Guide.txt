@@ -1,0 +1,159 @@
+
+To generate Adnroid APK file in Windows
+
+bash command:
+eas build --platform android
+
+Convert the AAB to a universal APK:
+
+    1. Open your terminal.
+
+    2. Navigate to the directory where you downloaded the .aab file and the bundletool.jar file.
+
+    3. Run the following command, replacing your_app_bundle.aab with your AAB file's name and output.apks with your desired output file name:
+
+    bash command:
+    java -jar bundletool.jar build-apks --bundle=your_app_bundle.aab --output=output.apks --mode=universal
+
+    eg. java -jar bundletool.jar build-apks --bundle=application-92501c93-c82a-4421-98e4-74de7c124fee.aab --output=output.apks --mode=universal
+
+
+
+
+
+## Start from installation guide ##
+
+It sounds like your React Native project was created using the Expo workflow, not the standard React Native CLI. In an Expo project, the android folder is intentionally absent because Expo handles the native build process for you on its cloud servers.
+
+1. The Right Way to Build with Expo
+Instead of generating an APK with Android Studio, you should use the EAS CLI (eas-cli). This tool will build your app on Expo's servers and provide you with a downloadable APK file.
+
+Install the EAS CLI: If you haven't already, install the EAS command-line interface globally by running:
+
+Bash
+
+npm install -g eas-cli
+Log in to your Expo account: Use the eas login command to authenticate with your Expo account in the terminal.
+
+Bash
+
+eas login
+Start the build: Run the following command from your project's root directory. This will start the build process on the cloud.
+
+Bash
+
+eas build -p android
+eg. eas build --profile production --platform android
+
+Download the APK: EAS will build your app and provide you with a URL to download the final .aab (Android App Bundle) file. You will need to then convert this file to an APK.
+
+2. Converting an AAB to an APK
+Because EAS builds an AAB by default, you'll need to use Google's bundletool to get a universal APK.
+
+Download bundletool: Get the latest .jar file from the official bundletool GitHub releases page.
+
+Run the command: Open your terminal in the same directory as the downloaded bundletool.jar and the .aab file. Then, execute the following command:
+
+Bash
+
+java -jar bundletool.jar build-apks --bundle=your-app.aab --output=output.apks --mode=universal
+eg. java -jar bundletool.jar build-apks --bundle=application-20b133ca-4e5e-4130-9560-945908faa083.aab --output=output.apks --mode=universal
+
+Note: If you get a Java version error, you'll need to update your Java JDK to at least version 11.
+
+Rename and Extract: The command will generate an output.apks file. Simply rename this file to output.zip and extract it. Inside, you'll find the installable universal.apk.
+
+Why the android Folder is Missing
+In the Expo managed workflow, the android folder is a native directory that contains all the files needed to build the Android app. Expo abstracts this away, handling the native code configuration for you. If you need to access this folder to add custom native code or use a local build, you would run the npx expo prebuild command.
+
+
+
+
+
+
+To Sign an APK file.
+    1. Create a Keystore
+    You can create a keystore using the keytool command-line utility, which comes with the Java JDK. Open a new terminal and run this command:
+
+    Bash
+
+    keytool -genkey -v -keystore my-release-key.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000
+    -keystore my-release-key.keystore: This creates a keystore file named my-release-key.keystore.
+
+    -alias my-key-alias: This is a name you can use later to refer to this keystore.
+
+    -validity 10000: This sets the validity of the key in days (approximately 27 years).
+
+    The command will then ask you to provide a password for the keystore, a password for the key alias, and some information about your organization. Make sure to remember these passwords.
+
+    2. Sign the APK
+    Now you can use the apksigner tool to sign your APK. The apksigner tool is located inside your Android SDK installation. The path is typically C:\Users\YourUsername\AppData\Local\Android\sdk\build-tools\YourSDKVersion\apksigner.bat.
+
+    Once you've located the tool, run the following command in your terminal. Replace the paths with your actual paths.
+
+    Bash
+
+    C:\Users\YourUsername\AppData\Local\Android\sdk\build-tools\YourSDKVersion\apksigner sign --ks my-release-key.keystore --out my-app-release.apk universal.apk
+    --ks my-release-key.keystore: This specifies the keystore you created earlier.
+
+    eg. "C:\Users\BKH-User\AppData\Local\Android\sdk\build-tools\34.0.0\apksigner.bat" sign --ks C:\ReactNative\my-release-key.keystore --out C:\ReactNative\output\my-app-release.apk C:\ReactNative\universal.apk
+
+    --out my-app-release.apk: This is the name of the new, signed APK file that will be created.
+
+    universal.apk: This is the unsigned APK you want to sign.
+
+    After you enter this command, apksigner will prompt you for the keystore password. Once you provide the correct password, it will create the my-app-release.apk file. This new file is signed and should be installable on your Android device.
+
+    Remember to replace YourUsername and YourSDKVersion with your actual username and the version number of your Android SDK build tools.
+
+
+
+
+
+
+
+## Debugging ##
+
+App repeatedly force stopping on an Android device is a common problem in React Native development. This usually points to a native code issue, where a part of your app's Android-specific code crashes.
+
+Here's a list of common causes and how to debug them:
+
+1. Check for Corrupted Build
+The most frequent cause is a corrupted or improperly configured build.
+
+Corrupted AAB/APK: The universal.apk file you created might be corrupted. Try to rebuild the AAB file on Expo and convert it to an APK again.
+
+Unsigned APK: Although you followed the steps to sign the APK, any minor mistake during the process could result in an invalid signature. Double-check your keystore and signing command.
+
+2. Check for Compatibility Issues
+An app can crash if it's incompatible with the device's Android version or architecture.
+
+API Level Mismatch: Your app might be built for a newer Android version than the one on your device. Check your app's minSdkVersion in android/app/build.gradle.
+
+CPU Architecture: Most Android phones use armeabi-v7a or arm64-v8a architectures. Your APK might only be built for one of them, but your phone requires the other. Building a universal APK should solve this, but it's worth checking.
+
+3. Debug with Android Logcat
+To find the exact cause of the crash, you need to look at the device's logs using Android Logcat.
+
+Connect your phone: Plug your Android phone into your PC with a USB cable.
+
+Enable USB Debugging:
+
+Go to Settings > About phone and tap the Build number seven times to enable Developer options.
+
+Go to Settings > Developer options and enable USB debugging.
+
+Use Logcat in a terminal: Open your terminal and run adb logcat. This will stream all the logs from your device.
+
+Reproduce the crash: Try to open your app again and watch the logs. You'll see a red error message with a "Fatal Exception" and a stack trace. This will tell you exactly what line of code caused the crash.
+
+The logcat output will likely point to a native module that's crashing or a missing resource file.
+
+connect the device first
+
+adb connect your.device.ip.address:5555
+eg. adb connect 192.168.18.73:5555
+
+Use log filter
+eg. adb logcat | findstr "co.zeyar.habittracker.MainAcitivity"
+eg. adb logcat | findstr "co.zeyar.habittracker"

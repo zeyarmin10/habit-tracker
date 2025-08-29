@@ -236,23 +236,126 @@ const HomeScreen = () => {
           </View>
         ) : (
           <SwipeListView
-            data={habits}
+            data={
+              // Sort: uncompleted today first, completed today last
+              [...habits].sort((a, b) => {
+                const today = new Date().toISOString().split("T")[0];
+                const aCompleted = a.completed && a.completed[today];
+                const bCompleted = b.completed && b.completed[today];
+                if (aCompleted === bCompleted) return 0;
+                return aCompleted ? 1 : -1;
+              })
+            }
             keyExtractor={(item) => item.id}
-            renderItem={renderItem}
-            renderHiddenItem={renderHiddenItem}
-            leftOpenValue={75} // How much to open on left swipe (for "Complete")
-            rightOpenValue={-75} // How much to open on right swipe (for "Delete")
-            previewRowKey={"0"} // Optional: key of row to show preview swipe
-            previewOpenValue={-40} // Optional: initial preview open value
-            previewOpenDelay={3000} // Optional: delay for preview
-            disableLeftSwipe={false} // Enable left swipe
-            disableRightSwipe={false} // Enable right swipe
+            renderItem={({ item }) => {
+              const today = new Date().toISOString().split("T")[0];
+              const isCompletedToday = item.completed && item.completed[today];
+              return (
+                <TouchableOpacity
+                  activeOpacity={1}
+                  disabled={isCompletedToday}
+                  style={[
+                    styles.rowFront,
+                    isCompletedToday && { backgroundColor: "#e0e0e0" },
+                  ]}
+                >
+                  <Card
+                    style={[
+                      styles.habitCard,
+                      isCompletedToday && { backgroundColor: "#f5f5f5" },
+                    ]}
+                  >
+                    <Card.Title
+                      title={item.name}
+                      subtitle={item.description || "No description"}
+                      left={() => (
+                        <MaterialCommunityIcons
+                          name={
+                            item.frequency === "daily"
+                              ? "calendar-today"
+                              : item.frequency === "weekly"
+                              ? "calendar-week"
+                              : "calendar-month"
+                          }
+                          size={24}
+                          color={theme.colors.primary}
+                        />
+                      )}
+                      right={() =>
+                        isCompletedToday ? (
+                          <MaterialCommunityIcons
+                            name="check-circle"
+                            size={24}
+                            color="green"
+                            style={{ marginRight: 10 }}
+                          />
+                        ) : null
+                      }
+                    />
+                    <Card.Content>
+                      <Text>Frequency: {item.frequency}</Text>
+                      <Text style={styles.dateText}>
+                        Created: {new Date(item.createdAt).toLocaleDateString()}
+                      </Text>
+                    </Card.Content>
+                  </Card>
+                </TouchableOpacity>
+              );
+            }}
+            renderHiddenItem={({ item }) => {
+              const today = new Date().toISOString().split("T")[0];
+              const isCompletedToday = item.completed && item.completed[today];
+              return (
+                <View style={styles.rowBack}>
+                  {/* Left Action (Complete/Completed) */}
+                  <TouchableOpacity
+                    style={[
+                      styles.backBtn,
+                      styles.backBtnLeft,
+                      isCompletedToday && { backgroundColor: "#bdbdbd" },
+                    ]}
+                    disabled={isCompletedToday}
+                    onPress={() =>
+                      !isCompletedToday && handleCompleteHabit(item.id)
+                    }
+                  >
+                    <MaterialCommunityIcons
+                      name={isCompletedToday ? "check-circle" : "check"}
+                      size={25}
+                      color="white"
+                    />
+                    <Text style={styles.backBtnText}>
+                      {isCompletedToday ? "Completed" : "Complete"}
+                    </Text>
+                  </TouchableOpacity>
+
+                  {/* Right Action (Delete) */}
+                  <TouchableOpacity
+                    style={[styles.backBtn, styles.backBtnRight]}
+                    onPress={() => handleDeleteHabit(item.id)}
+                  >
+                    <MaterialCommunityIcons
+                      name="delete"
+                      size={25}
+                      color="white"
+                    />
+                    <Text style={styles.backBtnText}>Delete</Text>
+                  </TouchableOpacity>
+                </View>
+              );
+            }}
+            leftOpenValue={75}
+            rightOpenValue={-75}
+            previewRowKey={"0"}
+            previewOpenValue={-40}
+            previewOpenDelay={3000}
+            disableLeftSwipe={false}
+            disableRightSwipe={false}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.habitListContent}
-            // Ensure the rows are kept open briefly on action
-            closeOnRowPress={true} // Closes row when pressing the foreground
-            tension={30} // Adjust tension for swipe feel
-            friction={7} // Adjust friction for swipe feel
+            closeOnRowPress={true}
+            tension={30}
+            friction={7}
           />
         )}
       </View>

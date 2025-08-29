@@ -16,7 +16,8 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.zeyarmin.habittracker"
     },
     "web": {
       "bundler": "metro",
@@ -40,8 +41,13 @@
     },
     "extra": {
       "router": {
-        // Exclude the hooks directory from Expo Router's scanning
-        "unstable_exclude": ["**/hooks/**"]
+        "unstable_exclude": [
+          "**/hooks/**",
+          "**/hooks/**"
+        ]
+      },
+      "eas": {
+        "projectId": "ab5f8af0-5cce-49e9-a919-8d3595ed3ee5"
       }
     }
   }
