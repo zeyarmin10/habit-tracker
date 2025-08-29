@@ -13,7 +13,13 @@ import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
 
 // Importing auth and database from a separate config file
-import { database, auth } from "../../lib/firebase"; // Adjust path if needed
+import {
+  database,
+  auth,
+  webClientId,
+  iosClientId,
+  androidClientId,
+} from "../../lib/firebase"; // Adjust path if needed
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -46,9 +52,9 @@ export const useAuthService = () => {
 
   // Google Sign-In hook from expo-auth-session
   const [googleRequest, googleResponse, promptAsync] = Google.useAuthRequest({
-    webClientId: "YOUR_WEB_CLIENT_ID", // Replace with your web client ID from Firebase
-    iosClientId: "YOUR_IOS_CLIENT_ID", // Replace with your iOS client ID from Firebase
-    androidClientId: "YOUR_ANDROID_CLIENT_ID", // Replace with your Android client ID from Firebase
+    webClientId: webClientId, // Replace with your web client ID from Firebase
+    iosClientId: iosClientId, // Replace with your iOS client ID from Firebase
+    androidClientId: androidClientId, // Replace with your Android client ID from Firebase
   });
 
   // Effect to handle the Google Sign-In response

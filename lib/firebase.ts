@@ -24,4 +24,11 @@ const database = getDatabase(app);
 // Initialize Firebase Authentication and get a reference to the service
 const auth = getAuth(app);
 
+export const webClientId =
+  "145216875810-0kj2c34etndhck832dtvm59n22oiijos.apps.googleusercontent.com";
+export const iosClientId =
+  "145216875810-0kj2c34etndhck832dtvm59n22oiijos.apps.googleusercontent.com";
+export const androidClientId =
+  "145216875810-0kj2c34etndhck832dtvm59n22oiijos.apps.googleusercontent.com";
+
 export { database, auth }; // Export both database and auth
