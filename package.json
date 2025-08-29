@@ -3,6 +3,7 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
+    "preinstall": "npx npm-force-resolutions",
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android",
@@ -35,9 +36,9 @@
     "react-native": "0.79.6",
     "react-native-gesture-handler": "~2.24.0",
     "react-native-paper": "^5.14.5",
-    "react-native-reanimated": "~3.17.4",
     "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "~4.11.1",
+    "react-native-swipe-list-view": "^3.2.9",
     "react-native-vector-icons": "^10.3.0",
     "react-native-web": "~0.20.0",
     "react-native-webview": "13.13.5"
@@ -50,5 +51,10 @@
     "eslint-config-expo": "~9.2.0",
     "typescript": "~5.8.3"
   },
-  "private": true
+  "private": true,
+  "resolutions": {
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "react-native": "0.79.6"
+  }
 }

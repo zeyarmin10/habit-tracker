@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Alert, ScrollView } from "react-native"; // Import ScrollView for better form handling
+import { StyleSheet, View, Alert, ScrollView } from "react-native";
 import {
   Button,
   TextInput,
@@ -10,16 +10,16 @@ import {
 import { router, Stack } from "expo-router";
 import { ref, push, set } from "firebase/database";
 
-import { useAuth } from "../hooks/useAuthService"; // Adjust path as needed
-import { database } from "../../lib/firebase"; // Adjust path as needed
+import { useAuth } from "../hooks/useAuthService";
+import { database } from "../../lib/firebase";
 
 const CreateHabitScreen = () => {
   const { user } = useAuth();
   const theme = useTheme();
 
   const [habitName, setHabitName] = useState("");
-  const [description, setDescription] = useState(""); // New state for description
-  const [frequency, setFrequency] = useState("daily"); // 'daily', 'weekly', 'monthly'
+  const [description, setDescription] = useState("");
+  const [frequency, setFrequency] = useState("daily");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -40,13 +40,21 @@ const CreateHabitScreen = () => {
       const newHabitRef = push(ref(database, `users/${user.uid}/habits`));
       await set(newHabitRef, {
         name: habitName.trim(),
-        description: description.trim(), // Save the description
+        description: description.trim(),
         frequency: frequency,
         createdAt: new Date().toISOString(),
-        // You might want to add other fields like lastCompleted, streak, etc.
       });
-      Alert.alert("Success", "Habit created successfully!");
-      router.back(); // Go back to the habits list
+      Alert.alert("Success", "Habit created successfully!", [
+        {
+          text: "OK",
+          onPress: () => {
+            // A slight delay can help if router.back() is too fast
+            // However, the error usually indicates a deeper router state issue.
+            // Let's try router.pop() which is more explicit for closing current screen.
+            router.back(); // Using router.back() is generally correct for modals
+          },
+        },
+      ]);
     } catch (e: any) {
       setError("Failed to create habit: " + e.message);
       console.error("Error creating habit:", e);
@@ -75,7 +83,7 @@ const CreateHabitScreen = () => {
         />
 
         <TextInput
-          label="Description (Optional)" // New description input
+          label="Description (Optional)"
           value={description}
           onChangeText={setDescription}
           mode="outlined"
@@ -113,7 +121,7 @@ const CreateHabitScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1, // Allows ScrollView to grow
+    flexGrow: 1,
     backgroundColor: "#f0f4f7",
     padding: 20,
     alignItems: "center",
@@ -129,18 +137,18 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   descriptionInput: {
-    minHeight: 100, // Make description input taller
-    textAlignVertical: "top", // Align text to top for multiline
+    minHeight: 100,
+    textAlignVertical: "top",
   },
   frequencyLabel: {
     fontSize: 16,
     color: "#666",
     marginBottom: 10,
     alignSelf: "flex-start",
-    marginLeft: "10%", // Align with input
+    marginLeft: "10%",
   },
   segmentedButtons: {
-    width: "90%", // Adjust width to be similar to input
+    width: "90%",
     marginBottom: 30,
   },
   button: {

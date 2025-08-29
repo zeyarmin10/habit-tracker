@@ -128,18 +128,33 @@ const AuthForm = () => {
         )}
       </View>
       <View style={styles.buttonContainer}>
-        <Button mode="contained" onPress={handleSubmit} style={styles.button}>
-          {isRegistering ? "Sign Up" : "Log In"}
-        </Button>
         <Button
           mode="contained"
-          icon="google"
-          onPress={promptGoogleSignIn}
-          style={[styles.button, styles.googleButton]}
-          disabled={!googleRequest}
+          onPress={handleSubmit}
+          style={[styles.button, { marginBottom: 12 }]}
         >
-          Sign in with Google
+          {isRegistering ? "Sign Up" : "Log In"}
         </Button>
+        {!isRegistering && (
+          <Button
+            mode="outlined"
+            icon="google"
+            onPress={promptGoogleSignIn}
+            style={[
+              styles.button,
+              {
+                borderColor: theme.colors.primary,
+                borderWidth: 2,
+                backgroundColor: "transparent",
+                marginBottom: 12,
+              },
+            ]}
+            labelStyle={{ color: theme.colors.primary }}
+            disabled={!googleRequest}
+          >
+            Sign in with Google
+          </Button>
+        )}
       </View>
 
       <Button onPress={handleToggleForm} style={styles.toggleButton}>
