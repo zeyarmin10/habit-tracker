@@ -8,7 +8,7 @@ import {
   signInWithCredential,
   User,
 } from "firebase/auth";
-import { ref, set } from "firebase/database";
+import { ref, set, get, child } from "firebase/database";
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
 
@@ -44,55 +44,79 @@ export const AuthContext = createContext<AuthContextType | undefined>(
   undefined
 );
 
-// Custom hook to handle all authentication logic
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+};
+
+// --- Auth Provider ---
 export const useAuthService = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [authError, setAuthError] = useState<string | null>(null);
 
-  // Google Sign-In hook from expo-auth-session
+  // Use the Expo-Auth-Session hook to get the request and promptAsync function
   const [googleRequest, googleResponse, promptAsync] = Google.useAuthRequest({
-    webClientId: webClientId, // Replace with your web client ID from Firebase
-    iosClientId: iosClientId, // Replace with your iOS client ID from Firebase
-    androidClientId: androidClientId, // Replace with your Android client ID from Firebase
+    webClientId: webClientId,
+    iosClientId: iosClientId,
+    androidClientId: androidClientId,
   });
 
-  // Effect to handle the Google Sign-In response
+  // Effect to handle the Google sign-in response
   useEffect(() => {
-    if (googleResponse?.type === "success") {
-      const { authentication } = googleResponse;
-      const credential = GoogleAuthProvider.credential(authentication.idToken);
-      signInWithCredential(auth, credential).catch((error) => {
-        setAuthError("Google Sign-In failed: " + error.message);
-        console.error("Google Sign-In error:", error);
-      });
-    } else if (googleResponse?.type === "error") {
-      setAuthError("Google Sign-In failed. Please try again.");
-    }
+    const handleGoogleSignIn = async () => {
+      if (googleResponse?.type === "success") {
+        setAuthError(null);
+        try {
+          const { idToken } = googleResponse.authentication!;
+          const credential = GoogleAuthProvider.credential(idToken);
+          await signInWithCredential(auth, credential);
+        } catch (error: any) {
+          setAuthError("Google sign-in failed: " + error.message);
+          console.error("Google sign-in error:", error);
+        }
+      } else if (googleResponse?.type === "error") {
+        setAuthError(
+          "Google sign-in failed. Please check your network and try again."
+        );
+        console.error("Google sign-in response error:", googleResponse.error);
+      }
+    };
+    handleGoogleSignIn();
   }, [googleResponse]);
 
-  // Effect to listen for changes in Firebase authentication state
+  // Effect to handle Firebase auth state changes
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (authUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
       setUser(authUser);
+      if (authUser) {
+        // Create user profile in the database if it doesn't exist
+        const userProfileRef = ref(database, `users/${authUser.uid}/profile`);
+        const snapshot = await get(userProfileRef);
+        if (!snapshot.exists()) {
+          // Check if the user has a display name from Google, otherwise use a generic name
+          const name = authUser.displayName || "New User";
+          await set(userProfileRef, {
+            email: authUser.email,
+            name: name,
+            createdAt: new Date().toISOString(),
+          });
+        }
+      }
       setLoading(false);
     });
-    return unsubscribe;
+    return () => unsubscribe();
   }, []);
 
   const handleLogin = async (email: string, password: string) => {
     setAuthError(null);
     try {
-      if (!email || !password) {
-        setAuthError("Email and password are required.");
-        return;
-      }
       await signInWithEmailAndPassword(auth, email, password);
     } catch (error: any) {
-      if (
-        error.code === "auth/wrong-password" ||
-        error.code === "auth/user-not-found"
-      ) {
+      if (error.code === "auth/invalid-credential") {
         setAuthError("Invalid email or password.");
       } else {
         setAuthError("Login failed: " + error.message);
@@ -108,20 +132,12 @@ export const useAuthService = () => {
   ) => {
     setAuthError(null);
     try {
-      if (!name || !email || !password) {
-        setAuthError("All fields are required.");
-        return;
-      }
-      if (password.length < 6) {
-        setAuthError("Password should be at least 6 characters.");
-        return;
-      }
-
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
         password
       );
+      // Create a user profile entry in the database
       await set(
         ref(database, "users/" + userCredential.user.uid + "/profile"),
         {
@@ -168,13 +184,4 @@ export const useAuthService = () => {
     promptGoogleSignIn,
     googleRequest,
   };
-};
-
-// Custom hook for consuming the AuthContext (for components that need auth state)
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
 };

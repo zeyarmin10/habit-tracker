@@ -136,23 +136,17 @@ const AuthForm = () => {
         <Button
           mode="contained"
           onPress={handleSubmit}
-          style={[styles.button, { marginBottom: 12 }]}
+          style={[styles.button, { backgroundColor: theme.colors.primary }]}
         >
           {isRegistering ? "Sign Up" : "Log In"}
         </Button>
         {!isRegistering && (
           <Button
             mode="outlined"
-            icon="google"
             onPress={promptGoogleSignIn}
             style={[
-              styles.button,
-              {
-                borderColor: theme.colors.primary,
-                borderWidth: 2,
-                backgroundColor: "transparent",
-                marginBottom: 12,
-              },
+              styles.socialButton,
+              { borderColor: theme.colors.primary, borderWidth: 1 },
             ]}
             labelStyle={{ color: theme.colors.primary }}
             disabled={!googleRequest}
@@ -203,6 +197,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   button: {
+    padding: 5,
+    borderRadius: 8,
+    marginBottom: 15,
+  },
+  socialButton: {
+    borderRadius: 8,
     padding: 5,
   },
   googleButton: {
