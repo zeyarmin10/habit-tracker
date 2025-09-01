@@ -3,6 +3,7 @@ import { StyleSheet, View, KeyboardAvoidingView, Platform } from "react-native";
 import { TextInput, Button, Text, useTheme } from "react-native-paper"; // Import useTheme
 
 import { useAuth } from "../hooks/useAuthService"; // Import useAuth hook
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const AuthForm = () => {
   const {
@@ -95,6 +96,7 @@ const AuthForm = () => {
             value={name}
             onChangeText={setName}
             mode="outlined"
+            left={<TextInput.Icon icon="account" />}
           />
         )}
 
@@ -106,6 +108,7 @@ const AuthForm = () => {
           autoCapitalize="none"
           keyboardType="email-address"
           mode="outlined"
+          left={<TextInput.Icon icon="email" />}
         />
         <TextInput
           style={styles.input}
@@ -114,6 +117,7 @@ const AuthForm = () => {
           onChangeText={setPassword}
           secureTextEntry
           mode="outlined"
+          left={<TextInput.Icon icon="lock" />}
         />
 
         {isRegistering && (
@@ -124,6 +128,7 @@ const AuthForm = () => {
             onChangeText={setConfirmPassword}
             secureTextEntry
             mode="outlined"
+            left={<TextInput.Icon icon="lock" />}
           />
         )}
       </View>
@@ -151,6 +156,13 @@ const AuthForm = () => {
             ]}
             labelStyle={{ color: theme.colors.primary }}
             disabled={!googleRequest}
+            icon={() => (
+              <MaterialCommunityIcons
+                name="google"
+                size={20}
+                color={theme.colors.primary}
+              />
+            )}
           >
             Sign in with Google
           </Button>
@@ -191,7 +203,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   button: {
-    padding: 10,
+    padding: 5,
   },
   googleButton: {
     marginTop: 10,
