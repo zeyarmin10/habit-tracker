@@ -1,6 +1,13 @@
 import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
-import { getAuth } from "firebase/auth"; // Import getAuth
+import {
+  getAuth,
+  initializeAuth,
+  getReactNativePersistence,
+} from "firebase/auth"; // Import getAuth
+import AsyncStorage, {
+  AsyncStorageStatic,
+} from "@react-native-async-storage/async-storage";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -22,7 +29,9 @@ const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
 // Initialize Firebase Authentication and get a reference to the service
-const auth = getAuth(app);
+const auth = initializeAuth(app, {
+  persistence: getReactNativePersistence(AsyncStorage),
+});
 
 export const webClientId =
   "145216875810-0kj2c34etndhck832dtvm59n22oiijos.apps.googleusercontent.com";
