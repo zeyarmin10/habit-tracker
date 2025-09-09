@@ -3,6 +3,7 @@ import { Stack, router } from "expo-router";
 import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
 import { AuthContext, useAuthService } from "./hooks/useAuthService";
 import AuthLoadingScreen from "./screens/AuthLoadingScreen";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 const theme = {
   ...DefaultTheme,
@@ -27,26 +28,28 @@ export default function RootLayout() {
   }, [authState.user, authState.loading]);
 
   return (
-    <PaperProvider theme={theme}>
-      <AuthContext.Provider value={authState}>
-        {authState.loading ? (
-          <AuthLoadingScreen />
-        ) : (
-          <Stack>
-            <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen name="(app)" options={{ headerShown: false }} />
-            {/* UPDATED PATH HERE for the create-habit modal */}
-            <Stack.Screen
-              name="modals/create-habit" // Changed path
-              options={{
-                presentation: "modal",
-                headerShown: true,
-                title: "Create New Habit",
-              }}
-            />
-          </Stack>
-        )}
-      </AuthContext.Provider>
-    </PaperProvider>
+    <SafeAreaProvider>
+      <PaperProvider theme={theme}>
+        <AuthContext.Provider value={authState}>
+          {authState.loading ? (
+            <AuthLoadingScreen />
+          ) : (
+            <Stack>
+              <Stack.Screen name="index" options={{ headerShown: false }} />
+              <Stack.Screen name="(app)" options={{ headerShown: false }} />
+              {/* UPDATED PATH HERE for the create-habit modal */}
+              <Stack.Screen
+                name="modals/create-habit" // Changed path
+                options={{
+                  presentation: "modal",
+                  headerShown: true,
+                  title: "Create New Habit",
+                }}
+              />
+            </Stack>
+          )}
+        </AuthContext.Provider>
+      </PaperProvider>
+    </SafeAreaProvider>
   );
 }

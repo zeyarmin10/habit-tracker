@@ -21,6 +21,12 @@ import {
   androidClientId,
 } from "../../lib/firebase"; // Adjust path if needed
 
+import {
+  GoogleSignin,
+  GoogleSigninButton,
+  statusCodes,
+} from "@react-native-google-signin/google-signin";
+
 WebBrowser.maybeCompleteAuthSession();
 
 // --- Auth Context and Hook ---
@@ -58,35 +64,43 @@ export const useAuthService = () => {
   const [loading, setLoading] = useState(true);
   const [authError, setAuthError] = useState<string | null>(null);
 
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId: webClientId,
+      offlineAccess: true,
+      forceCodeForRefreshToken: true,
+    });
+  }, []);
+
   // Use the Expo-Auth-Session hook to get the request and promptAsync function
-  const [googleRequest, googleResponse, promptAsync] = Google.useAuthRequest({
-    webClientId: webClientId,
-    iosClientId: iosClientId,
-    androidClientId: androidClientId,
-  });
+  //   const [googleRequest, googleResponse, promptAsync] = Google.useAuthRequest({
+  //     webClientId: webClientId,
+  //     iosClientId: iosClientId,
+  //     androidClientId: androidClientId,
+  //   });
 
   // Effect to handle the Google sign-in response
-  useEffect(() => {
-    const handleGoogleSignIn = async () => {
-      if (googleResponse?.type === "success") {
-        setAuthError(null);
-        try {
-          const { idToken } = googleResponse.authentication!;
-          const credential = GoogleAuthProvider.credential(idToken);
-          await signInWithCredential(auth, credential);
-        } catch (error: any) {
-          setAuthError("Google sign-in failed: " + error.message);
-          console.error("Google sign-in error:", error);
-        }
-      } else if (googleResponse?.type === "error") {
-        setAuthError(
-          "Google sign-in failed. Please check your network and try again."
-        );
-        console.error("Google sign-in response error:", googleResponse.error);
-      }
-    };
-    handleGoogleSignIn();
-  }, [googleResponse]);
+  //   useEffect(() => {
+  //     const handleGoogleSignIn = async () => {
+  //       if (googleResponse?.type === "success") {
+  //         setAuthError(null);
+  //         try {
+  //           const { idToken } = googleResponse.authentication!;
+  //           const credential = GoogleAuthProvider.credential(idToken);
+  //           await signInWithCredential(auth, credential);
+  //         } catch (error: any) {
+  //           setAuthError("Google sign-in failed: " + error.message);
+  //           console.error("Google sign-in error:", error);
+  //         }
+  //       } else if (googleResponse?.type === "error") {
+  //         setAuthError(
+  //           "Google sign-in failed. Please check your network and try again."
+  //         );
+  //         console.error("Google sign-in response error:", googleResponse.error);
+  //       }
+  //     };
+  //     handleGoogleSignIn();
+  //   }, [googleResponse]);
 
   // Effect to handle Firebase auth state changes
   useEffect(() => {
@@ -170,7 +184,50 @@ export const useAuthService = () => {
 
   const promptGoogleSignIn = async () => {
     setAuthError(null);
-    await promptAsync();
+    // await promptAsync();
+    try {
+      await GoogleSignin.hasPlayServices();
+      await GoogleSignin.signOut(); // clear previous session
+      const userInfo = await GoogleSignin.signIn();
+      console.log("User Info:", userInfo);
+
+      const idToken = userInfo.idToken || userInfo.data?.idToken;
+
+      console.log("idToken : ", idToken);
+
+      if (!idToken) {
+        throw new Error("No ID Token provided from Google.");
+      }
+
+      const googleCredential = GoogleAuthProvider.credential(idToken);
+      await signInWithCredential(auth, googleCredential);
+
+      // Check if user profile already exists, if not, create one
+      const userRef = ref(
+        database,
+        "users/" + userInfo.data?.user.id + "/profile"
+      );
+      const userSnapshot = await get(userRef);
+
+      if (!userSnapshot.exists()) {
+        await set(userRef, {
+          email: userInfo.data?.user.email,
+          name: userInfo.data?.user.name,
+          createdAt: new Date().toISOString(),
+        });
+      }
+    } catch (error: any) {
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        console.log("User cancelled sign in");
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        console.log("Sign in in progress");
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        console.log("Play services not available");
+      } else {
+        console.error("Google sign-in error:", error);
+        setAuthError("Google Sign-In failed: " + error.message);
+      }
+    }
   };
 
   return {
@@ -182,6 +239,6 @@ export const useAuthService = () => {
     handleSignUp,
     handleSignOut,
     promptGoogleSignIn,
-    googleRequest,
+    // googleRequest,
   };
 };

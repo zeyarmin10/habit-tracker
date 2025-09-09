@@ -25,6 +25,7 @@
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="habittracker"/>
+        <data android:scheme="exp+habit-tracker"/>
       </intent-filter>
     </activity>
   </application>

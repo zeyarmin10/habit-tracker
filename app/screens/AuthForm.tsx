@@ -12,7 +12,7 @@ const AuthForm = () => {
     handleLogin,
     handleSignUp,
     promptGoogleSignIn,
-    googleRequest,
+    // googleRequest,
   } = useAuth();
   const theme = useTheme(); // Access the theme here
 
@@ -149,7 +149,6 @@ const AuthForm = () => {
               { borderColor: theme.colors.primary, borderWidth: 1 },
             ]}
             labelStyle={{ color: theme.colors.primary }}
-            disabled={!googleRequest}
             icon={() => (
               <MaterialCommunityIcons
                 name="google"

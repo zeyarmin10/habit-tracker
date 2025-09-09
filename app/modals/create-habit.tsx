@@ -6,12 +6,14 @@ import {
   Text,
   useTheme,
   SegmentedButtons,
+  PaperProvider,
 } from "react-native-paper";
 import { router, Stack } from "expo-router";
 import { ref, push, set } from "firebase/database";
 
 import { useAuth } from "../hooks/useAuthService";
 import { database } from "../../lib/firebase";
+import { Background } from "@react-navigation/elements";
 
 const CreateHabitScreen = () => {
   const { user } = useAuth();
@@ -67,7 +69,17 @@ const CreateHabitScreen = () => {
   return (
     <>
       <Stack.Screen
-        options={{ title: "Create New Habit", headerShown: true }}
+        options={{
+          title: "Create New Habit",
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: theme.colors.primary,
+          },
+          headerTintColor: "#fff", // This makes the title and back button white
+          headerTitleStyle: {
+            fontWeight: "bold",
+          },
+        }}
       />
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.title}>Define Your New Habit</Text>
@@ -153,7 +165,9 @@ const styles = StyleSheet.create({
   },
   button: {
     width: "90%",
-    padding: 10,
+    padding: 5,
+    borderRadius: 8,
+    marginBottom: 15,
   },
   errorText: {
     color: "red",
