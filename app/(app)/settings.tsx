@@ -158,8 +158,10 @@ const styles = StyleSheet.create({
   },
   button: {
     width: "90%",
-    padding: 8,
     marginTop: 20,
+    padding: 5,
+    borderRadius: 8,
+    marginBottom: 15,
   },
 });
 

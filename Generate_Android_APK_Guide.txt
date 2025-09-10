@@ -19,6 +19,14 @@ Convert the AAB to a universal APK:
 
 
 
+## Command Options for prebuild ##
+While the base command is simple, you can use flags to control its behavior:
+
+npx expo prebuild --clean: This is a very useful flag. It deletes the existing ios and android directories before regenerating them. This ensures that any old or conflicting files are removed, giving you a fresh, clean build.
+
+npx expo prebuild --platform <platform>: Specifies which native directory to generate. The options are all (default), ios, or android.
+
+npx expo prebuild --no-install: Prevents prebuild from running npm install or pod install automatically. This can be useful for debugging or when you want to handle the installation manually.
 
 
 ## Start from installation guide ##
@@ -57,7 +65,7 @@ Run the command: Open your terminal in the same directory as the downloaded bund
 Bash
 
 java -jar bundletool.jar build-apks --bundle=your-app.aab --output=output.apks --mode=universal
-eg. java -jar bundletool.jar build-apks --bundle=application-1f0d68a5-1053-4738-8228-f1c08433c5f6.aab --output=output.apks --mode=universal
+eg. java -jar bundletool.jar build-apks --bundle=application-1788fdb5-2c81-4286-a06f-984dc3c67fcc.aab --output=output.apks --mode=universal
 
 Note: If you get a Java version error, you'll need to update your Java JDK to at least version 11.
 
@@ -78,6 +86,7 @@ To Sign an APK file.
     Bash
 
     keytool -genkey -v -keystore my-release-key.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000
+
     -keystore my-release-key.keystore: This creates a keystore file named my-release-key.keystore.
 
     -alias my-key-alias: This is a name you can use later to refer to this keystore.
@@ -96,7 +105,7 @@ To Sign an APK file.
     C:\Users\YourUsername\AppData\Local\Android\sdk\build-tools\YourSDKVersion\apksigner sign --ks my-release-key.keystore --out my-app-release.apk universal.apk
     --ks my-release-key.keystore: This specifies the keystore you created earlier.
 
-    eg. "C:\Users\BKH-User\AppData\Local\Android\sdk\build-tools\34.0.0\apksigner.bat" sign --ks C:\ReactNative\my-release-key.keystore --out C:\ReactNative\output\my-app-release.apk C:\ReactNative\universal.apk
+    eg. "C:\Users\BKH-User\AppData\Local\Android\sdk\build-tools\34.0.0\apksigner.bat" sign --ks C:\ReactNative\habit-tracker\my-release-key.keystore --out C:\ReactNative\habit-tracker\output\my-app-release.apk C:\ReactNative\habit-tracker\output\universal.apk
 
     --out my-app-release.apk: This is the name of the new, signed APK file that will be created.
 

@@ -10,7 +10,7 @@ import {
 } from "firebase/auth";
 import { ref, set, get, child } from "firebase/database";
 import * as WebBrowser from "expo-web-browser";
-import * as Google from "expo-auth-session/providers/google";
+// import * as Google from "expo-auth-session/providers/google";
 
 // Importing auth and database from a separate config file
 import {
@@ -43,7 +43,7 @@ interface AuthContextType {
   ) => Promise<void>;
   handleSignOut: () => Promise<void>;
   promptGoogleSignIn: () => Promise<void>;
-  googleRequest: Google.AuthRequest | null;
+  //   googleRequest: Google.AuthRequest | null;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -69,6 +69,7 @@ export const useAuthService = () => {
       webClientId: webClientId,
       offlineAccess: true,
       forceCodeForRefreshToken: true,
+      iosClientId: iosClientId,
     });
   }, []);
 
@@ -189,11 +190,8 @@ export const useAuthService = () => {
       await GoogleSignin.hasPlayServices();
       await GoogleSignin.signOut(); // clear previous session
       const userInfo = await GoogleSignin.signIn();
-      console.log("User Info:", userInfo);
 
       const idToken = userInfo.idToken || userInfo.data?.idToken;
-
-      console.log("idToken : ", idToken);
 
       if (!idToken) {
         throw new Error("No ID Token provided from Google.");
